@@ -7,7 +7,7 @@ import Dashboard from './pages/Dashboard';
 import SignUp from './pages/SignUp';
 import Projects from './pages/Projects';
 import Header from './components/Header';
-import "./App.css"
+import "./App.css";
 
 function App() {
   return (
