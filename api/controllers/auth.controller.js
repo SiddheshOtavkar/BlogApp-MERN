@@ -41,7 +41,7 @@ export const signin = async (req, res, next) => {
         return res.json({
             success: false,
             message: "All fields are required",
-        })
+        });
     }
 
     try {
@@ -51,16 +51,16 @@ export const signin = async (req, res, next) => {
             return res.json({
                 success: false,
                 message: "User not found",
-            })
+            });
         }
-        
+
         const validPassword = bcryptjs.compareSync(password, validUser.password);
         if (!validPassword) {
             // return next(errorHandler(400, "Invalid password"));
             return res.json({
                 success: false,
                 message: "Invalid Password",
-            })
+            });
         }
 
         const token = jwt.sign(
@@ -76,6 +76,57 @@ export const signin = async (req, res, next) => {
                 httpOnly: true,
             })
             .json(rest);
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+};
+
+export const google = async (req, res, next) => {
+    const { email, name, googlePhotoUrl } = req.body;
+    try {
+        const user = await User.findOne({ email });
+        if (user) {
+            const token = jwt.sign(
+                { id: user._id, isAdmin: user.isAdmin },
+                process.env.JWT_SECRET
+            );
+            const { password, ...rest } = user._doc;
+            res
+                .status(200)
+                .cookie("access_token", token, {
+                    httpOnly: true,
+                })
+                .json(rest);
+        } else {
+            const generatedPassword =
+                Math.random().toString(36).slice(-8) +
+                Math.random().toString(36).slice(-8);
+
+            const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+            const newUser = new User({
+                username:
+                    name.toLowerCase().split(" ").join("") +
+                    Math.random().toString(9).slice(-4),
+                // John Doe => john doe => ["john", "doe"] => johndoe => johndoe5462
+                email,
+                password: hashedPassword,
+                profilePicture: googlePhotoUrl,
+            });
+            await newUser.save();
+
+            const token = jwt.sign(
+                { id: newUser._id, isAdmin: newUser.isAdmin },
+                process.env.JWT_SECRET
+            );
+            const { password, ...rest } = newUser._doc;
+            res
+                .status(200)
+                .cookie("access_token", token, {
+                    httpOnly: true,
+                })
+                .json(rest);
+        }
     } catch (error) {
         console.log(error);
         next(error);
