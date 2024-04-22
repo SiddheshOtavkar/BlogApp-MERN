@@ -1,7 +1,9 @@
 import bcryptjs from "bcryptjs";
 import User from "../models/user.model.js";
+import { errorHandler } from "../utils/error.js";
 
-export const updateUser = async (req, res) => {
+export const updateUser = async (req, res, next) => {
+    // console.log(req.user.id);
     if (req.user.id !== req.params.userId) {
         return next(errorHandler(403, "You are not allowed to update this user"));
     }
@@ -17,9 +19,7 @@ export const updateUser = async (req, res) => {
 
     if (req.body.username) {
         if (req.body.username.length < 4 || req.body.username.length > 20) {
-            return next(
-                errorHandler(400, "Username must be between 4 and 20 characters")
-            );
+            return next(errorHandler(400, "Username must be between 4 and 20 characters"));
         }
         if (req.body.username.includes(" ")) {
             return next(errorHandler(400, "Username cannot contain spaces"));
