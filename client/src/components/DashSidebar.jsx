@@ -10,6 +10,7 @@ import {
 import { Sidebar } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { signoutSuccess } from "../redux/user/userSlice";
 
 const DashSidebar = () => {
     const location = useLocation();
@@ -25,13 +26,22 @@ const DashSidebar = () => {
         }
     }, [location.search]);
 
-    const handleSignOut = async () => {
+    const handleSignout = async () => {
         try {
-            console.log("signout");
+            const res = await fetch("/api/user/signout", {
+                method: "POST",
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                console.log(data.message);
+            } else {
+                dispatch(signoutSuccess());
+            }
         } catch (error) {
             console.log(error.message);
         }
-    }
+    };
 
     return (
         <Sidebar className="w-full md:w-56">
@@ -92,7 +102,11 @@ const DashSidebar = () => {
                             </Link>
                         </>
                     )}
-                    <Sidebar.Item icon={HiArrowSmRight} className="cursor-pointer">
+                    <Sidebar.Item
+                        icon={HiArrowSmRight}
+                        onClick={handleSignout}
+                        className="cursor-pointer"
+                    >
                         Sign Out
                     </Sidebar.Item>
                 </Sidebar.ItemGroup>
