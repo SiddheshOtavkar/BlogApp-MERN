@@ -237,8 +237,13 @@ const DashProfile = () => {
                     placeholder="*******"
                     onChange={handleChange}
                 />
-                <Button type="submit" gradientDuoTone="purpleToBlue" outline>
-                    Update
+                <Button
+                    type='submit'
+                    gradientDuoTone='purpleToBlue'
+                    outline
+                    disabled={loading || imageFileUploading}
+                >
+                    {loading ? 'Loading...' : 'Update'}
                 </Button>
                 {currentUser.isAdmin && (
                     <Link to={"/create-post"}>
