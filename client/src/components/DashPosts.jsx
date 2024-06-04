@@ -34,6 +34,7 @@ const DashPosts = () => {
 
     const handleShowMore = async () => {
         const startIndex = userPosts.length;
+        // console.log(startIndex);
         try {
             const res = await fetch(
                 `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`
