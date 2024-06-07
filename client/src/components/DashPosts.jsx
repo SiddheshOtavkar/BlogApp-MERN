@@ -13,28 +13,32 @@ const DashPosts = () => {
     const [postIdToDelete, setPostIdToDelete] = useState('');
 
     useEffect(() => {
+        // console.log("First", userPosts.length);
         const fetchPosts = async () => {
+            if (!currentUser || !currentUser._id) return;
             try {
                 const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`);
                 const data = await res.json();
                 if (res.ok) {
+                    // console.log(data.posts);
                     setUserPosts(data.posts);
                     if (data.posts.length < 9) {
                         setShowMore(false);
                     }
                 }
+                console.log("Second", userPosts.length);
             } catch (error) {
                 console.log(error.message);
             }
         };
-        if (currentUser.isAdmin) {
+        if (currentUser?.isAdmin) {
             fetchPosts();
         }
     }, [currentUser._id]);
 
     const handleShowMore = async () => {
+        if (!currentUser || !currentUser._id) return;
         const startIndex = userPosts.length;
-        // console.log(startIndex);
         try {
             const res = await fetch(
                 `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`
@@ -52,8 +56,26 @@ const DashPosts = () => {
     };
 
     const handleDeletePost = async () => {
-        console.log("handleDeletePost");
-    }
+        setShowModal(false);
+        try {
+            const res = await fetch(
+                `/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,
+                {
+                    method: 'DELETE',
+                }
+            );
+            const data = await res.json();
+            if (!res.ok) {
+                console.log(data.message);
+            } else {
+                setUserPosts((prev) =>
+                    prev.filter((post) => post._id !== postIdToDelete)
+                );
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
 
     return (
         <div className='w-full overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
