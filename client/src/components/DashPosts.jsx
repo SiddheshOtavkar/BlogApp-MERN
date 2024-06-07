@@ -20,13 +20,11 @@ const DashPosts = () => {
                 const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`);
                 const data = await res.json();
                 if (res.ok) {
-                    // console.log(data.posts);
                     setUserPosts(data.posts);
                     if (data.posts.length < 9) {
                         setShowMore(false);
                     }
                 }
-                console.log("Second", userPosts.length);
             } catch (error) {
                 console.log(error.message);
             }
