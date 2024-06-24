@@ -77,7 +77,8 @@ const CommentSection = ({ postId }) => {
                                 likes: data.likes,
                                 numberOfLikes: data.likes.length,
                             }
-                            : comment
+                            :
+                            comment
                     )
                 );
             }
