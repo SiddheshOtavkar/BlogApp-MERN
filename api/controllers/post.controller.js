@@ -8,11 +8,13 @@ export const createPost = async (req, res, next) => {
     if (!req.body.title || !req.body.content) {
         return next(errorHandler(400, 'Please provide all required fields'));
     }
+
     const slug = req.body.title
         .split(' ')
         .join('-')
         .toLowerCase()
         .replace(/[^a-zA-Z0-9-]/g, '');
+        
     const newPost = new Post({
         ...req.body,
         slug,
@@ -31,6 +33,7 @@ export const getposts = async (req, res, next) => {
         const startIndex = parseInt(req.query.startIndex) || 0;
         const limit = parseInt(req.query.limit) || 9;
         const sortDirection = req.query.order === 'asc' ? 1 : -1;
+
         const posts = await Post.find({
             ...(req.query.userId && { userId: req.query.userId }),
             ...(req.query.category && { category: req.query.category }),
