@@ -10,6 +10,7 @@ import DashboardComp from '../components/DashboardComp';
 const Dashboard = () => {
 
     const location = useLocation();
+    // console.log(useLocation)
     const [tab, setTab] = useState('');
 
     useEffect(() => {
