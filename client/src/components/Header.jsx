@@ -15,6 +15,15 @@ const Header = () => {
     const { currentUser } = useSelector((state) => state.user);
     const { theme } = useSelector((state) => state.theme);
     const [searchTerm, setSearchTerm] = useState("");
+    const [show, setShow] = useState(false);
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(location.search);
+        const searchTermFromUrl = urlParams.get('searchTerm');
+        if (searchTermFromUrl) {
+            setSearchTerm(searchTermFromUrl);
+        }
+    }, [location.search]);
 
     const handleSignout = async () => {
         try {
@@ -33,6 +42,16 @@ const Header = () => {
         }
     };
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const urlParams = new URLSearchParams(location.search);
+        // console.log(location.search);
+        urlParams.set('searchTerm', searchTerm);
+        const searchQuery = urlParams.toString();
+        // console.log(searchQuery);
+        navigate(`/search?${searchQuery}`);
+    };
+
     return (
         <Navbar className="border-b-2">
             <Link
@@ -43,12 +62,14 @@ const Header = () => {
                     BlogifyMe
                 </span>
             </Link>
-            <form>
+            <form onSubmit={handleSubmit}>
                 <TextInput
                     type="text"
                     placeholder="search..."
                     rightIcon={AiOutlineSearch}
                     className="hidden lg:inline"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </form>
             <Button className="w-12 h-9 lg:hidden" color="gray" pill>
