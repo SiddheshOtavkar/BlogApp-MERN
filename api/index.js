@@ -10,9 +10,9 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from 'path';
 
-// const app = express();
-// app.use(express.json());
-// app.use(cookieParser());
+const app = express();
+app.use(express.json());
+app.use(cookieParser());
 app.use(cors());
 dotenv.config();
 
@@ -25,25 +25,9 @@ mongoose
     console.log(err);
   });
 
-// const __dirname = path.resolve();
-// // console.log(__dirname)
-
-// // const PORT = process.env.port || 5000;
-
 const __dirname = path.resolve();
 
-const app = express();
-
-app.use(express.json());
-app.use(cookieParser());
-const PORT = 5000;
-
-// app.listen(PORT, () => {
-//   console.log(`Server Running on port ${PORT}`.bgCyan.white);
-// });
-app.listen(5000, () => {
-  console.log('Server is running on port 5000!');
-});
+const PORT = process.env.port || 5000;
 
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
@@ -65,4 +49,8 @@ app.use((err, req, res, next) => {
     statusCode,
     message,
   });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server Running on port ${PORT}`.bgCyan.white);
 });
